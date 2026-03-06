@@ -1,5 +1,4 @@
 import { auth } from "@/auth"
-import { GameProvider } from "@/app/context/GameContext"
 import { GameLoop } from "@/components/game/GameLoop"
 
 export default async function Home() {
@@ -7,9 +6,7 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-zinc-950 font-sans">
-      <GameProvider>
-        <GameLoop />
-      </GameProvider>
+      <GameLoop />
     </div>
   )
 }

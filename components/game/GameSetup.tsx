@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { useGame } from '@/app/context/GameContext';
 import { InvestigatorSearch } from './InvestigatorSearch';
+import { ProjectCard } from './ProjectCard';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -11,14 +12,12 @@ import { X, Sword, Brain } from 'lucide-react';
 
 export function GameSetup() {
     const { state, dispatch } = useGame();
-    const [doomThreshold, setDoomThreshold] = React.useState(0);
 
     const handleStartGame = () => {
         dispatch({
             type: 'START_GAME',
             payload: {
                 investigators: state.investigators,
-                doomThreshold: doomThreshold > 0 ? doomThreshold : 99, // Default to high if not set
             },
         });
     };
@@ -31,21 +30,11 @@ export function GameSetup() {
                     <CardDescription className="text-zinc-400">Assemble your team and prepare for the mythos.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                    <div className="space-y-2">
-                        <Label htmlFor="doom" className="text-zinc-200">Agenda Doom Threshold</Label>
-                        <Input
-                            id="doom"
-                            type="number"
-                            placeholder="e.g. 6"
-                            value={doomThreshold || ''}
-                            onChange={(e) => setDoomThreshold(parseInt(e.target.value) || 0)}
-                            className="bg-zinc-800 border-zinc-700 text-zinc-100"
-                        />
-                    </div>
-
                     <div className="space-y-4">
                         <Label className="text-zinc-200">Investigators ({state.investigators.length}/4)</Label>
-
+                        {state.investigators.length < 4 && (
+                            <InvestigatorSearch />
+                        )}
                         <div className="flex flex-col gap-2">
                             {state.investigators.map((inv) => (
                                 <div key={inv.code} className="flex items-center justify-between p-3 bg-zinc-800 rounded-lg border border-zinc-700">
@@ -69,9 +58,7 @@ export function GameSetup() {
                             ))}
                         </div>
 
-                        {state.investigators.length < 4 && (
-                            <InvestigatorSearch />
-                        )}
+
                     </div>
 
                     <Button
@@ -83,6 +70,8 @@ export function GameSetup() {
                     </Button>
                 </CardContent>
             </Card>
+
+            <ProjectCard />
         </div>
     );
 }

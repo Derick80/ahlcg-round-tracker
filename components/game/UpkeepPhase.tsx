@@ -7,7 +7,7 @@ import { ArrowRight, RotateCw } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 
 export function UpkeepPhase() {
-    const { dispatch } = useGame();
+    const { state, dispatch } = useGame();
 
     return (
         <div className="flex flex-col gap-6 p-4 animate-in fade-in slide-in-from-right-4 duration-300">
@@ -18,17 +18,17 @@ export function UpkeepPhase() {
 
             <div className="space-y-4 bg-zinc-900 border border-zinc-800 p-6 rounded-lg">
                 <div className="flex items-center space-x-3 p-2 hover:bg-zinc-800 rounded transition-colors cursor-pointer">
-                    <Checkbox id="u1" />
-                    <label htmlFor="u1" className="text-zinc-300 font-serif text-lg cursor-pointer">Flip mini-cards to colored side.</label>
-                </div>
-                <div className="flex items-center space-x-3 p-2 hover:bg-zinc-800 rounded transition-colors cursor-pointer">
                     <Checkbox id="u2" />
                     <label htmlFor="u2" className="text-zinc-300 font-serif text-lg cursor-pointer">Ready all exhausted cards.</label>
                 </div>
-                <div className="flex items-center space-x-3 p-2 hover:bg-zinc-800 rounded transition-colors cursor-pointer">
-                    <Checkbox id="u3" />
-                    <label htmlFor="u3" className="text-zinc-300 font-serif text-lg cursor-pointer">Each investigator draws 1 card and gains 1 resource.</label>
-                </div>
+                {state.investigators.map((inv) => (
+                    <div key={inv.code} className="flex items-center space-x-3 p-2 hover:bg-zinc-800 rounded transition-colors cursor-pointer">
+                        <Checkbox id={`upkeep_draw_${inv.code}`} />
+                        <label htmlFor={`upkeep_draw_${inv.code}`} className="text-zinc-300 font-serif text-lg cursor-pointer">
+                            <span className="text-amber-500">{inv.name}</span> draws 1 card and gains 1 resource.
+                        </label>
+                    </div>
+                ))}
                 <div className="flex items-center space-x-3 p-2 hover:bg-zinc-800 rounded transition-colors cursor-pointer">
                     <Checkbox id="u4" />
                     <label htmlFor="u4" className="text-zinc-300 font-serif text-lg cursor-pointer">Check hand size (discard down to 8).</label>

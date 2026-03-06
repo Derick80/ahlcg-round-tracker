@@ -12,7 +12,7 @@ export function MythosPhase() {
         <div className="flex flex-col gap-6 p-4 animate-in fade-in zoom-in-95 duration-300">
             <div className="text-center space-y-2">
                 <h2 className="text-3xl font-serif text-zinc-200">Mythos Phase</h2>
-                <p className="text-zinc-500 text-sm italic">The forces of the unknown gather...</p>
+                <p className="text-zinc-500 text-sm italic">The forces of the Mythos gather...</p>
             </div>
 
             <div className="bg-zinc-900 border-zinc-800 rounded-lg p-6 space-y-4">

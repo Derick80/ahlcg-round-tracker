@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
-import { Heart, Brain, ChevronDown, ChevronUp, ArrowRight, RefreshCcw } from 'lucide-react';
+import { Heart, Brain, ChevronDown, ChevronUp, ArrowRight, RefreshCcw, Info } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Investigator } from '@/app/types/game';
 
 function InvestigatorRow({ inv }: { inv: Investigator }) {
@@ -18,18 +19,42 @@ function InvestigatorRow({ inv }: { inv: Investigator }) {
     const currentSanity = Math.max(0, inv.sanity - inv.sanityDamage);
     const isDefeated = currentHealth === 0 || currentSanity === 0;
 
-    const handleActionChange = (index: number) => {
-        // If clicking a filled pip (index < actions), reduce actions to that index (effectively spending it and those above).
-        // If clicking an empty pip (index >= actions), increase actions to include it (index + 1).
-        const newActions = index < inv.actions ? index : index + 1;
-        dispatch({
-            type: 'UPDATE_INVESTIGATOR',
-            payload: { code: inv.code, updates: { actions: newActions } }
-        });
-    };
 
     return (
-        <Card className={cn("bg-zinc-900 border-zinc-800 overflow-hidden transition-all", isDefeated && "opacity-50 grayscale")}>
+        <Card className={cn("bg-zinc-900 border-zinc-800 overflow-hidden transition-all relative", isDefeated && "opacity-50 grayscale")}>
+            <Popover>
+                <PopoverTrigger asChild>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-1 right-1 h-6 w-6 text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800 z-10"
+                    >
+                        <Info className="w-3.5 h-3.5" />
+                        <span className="sr-only">Info</span>
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-72 bg-zinc-900 border-zinc-700 text-zinc-300" align="end">
+                    <div className="space-y-3 text-sm">
+                        <div>
+                            <h4 className="font-semibold text-amber-400 mb-1">Action Pips</h4>
+                            <p className="text-zinc-400 leading-relaxed">Tap a pip to mark an action as spent — pips fill from left to right. Tap a filled pip to undo it.</p>
+                        </div>
+                        <div>
+                            <h4 className="font-semibold text-red-400 mb-1 flex items-center gap-1"><Heart className="w-3 h-3" /> Health</h4>
+                            <p className="text-zinc-400 leading-relaxed">Shows remaining health. Expand the card to add or remove damage. Defeated at 0.</p>
+                        </div>
+                        <div>
+                            <h4 className="font-semibold text-blue-400 mb-1 flex items-center gap-1"><Brain className="w-3 h-3" /> Sanity</h4>
+                            <p className="text-zinc-400 leading-relaxed">Shows remaining sanity. Expand the card to add or remove horror. Defeated at 0.</p>
+                        </div>
+                        <div>
+                            {/* describe the down chevron */}
+                            <h4 className="font-semibold text-zinc-400 mb-1 flex items-center gap-1"><ChevronDown className="w-3 h-3" /> Expand</h4>
+                            <p className="text-zinc-400 leading-relaxed">Expand the card to add or remove damage or horror.</p>
+                        </div>
+                    </div>
+                </PopoverContent>
+            </Popover>
             <div className="p-3 flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                     <div className="flex flex-col">
@@ -41,23 +66,36 @@ function InvestigatorRow({ inv }: { inv: Investigator }) {
                         </span>
                     </div>
 
-                    {/* Action Pips */}
+                    {/* Action Pips — fill up as actions are spent */}
                     <div className="flex flex-col items-end gap-1">
                         <div className="flex gap-1">
-                            {Array.from({ length: inv.maxActions || 3 }).map((_, i) => (
-                                <div
-                                    key={i}
-                                    onClick={() => handleActionChange(i)}
-                                    className={cn(
-                                        "w-6 h-6 rounded-full border-2 transition-colors cursor-pointer flex items-center justify-center",
-                                        i < inv.actions
-                                            ? "bg-amber-500 border-amber-600 shadow-[0_0_8px_rgba(245,158,11,0.5)]"
-                                            : "bg-zinc-950 border-zinc-800"
-                                    )}
-                                >
-                                    {i < inv.actions && <div className="w-1.5 h-1.5 bg-amber-100 rounded-full animate-pulse" />}
-                                </div>
-                            ))}
+                            {Array.from({ length: inv.maxActions || 3 }).map((_, i) => {
+                                const actionsSpent = (inv.maxActions || 3) - inv.actions;
+                                const isFilled = i < actionsSpent;
+                                return (
+                                    <div
+                                        key={i}
+                                        onClick={() => {
+                                            // Clicking a filled pip: unfill it and everything after
+                                            // Clicking an empty pip: fill it and everything before
+                                            const newSpent = isFilled ? i : i + 1;
+                                            const newActions = (inv.maxActions || 3) - newSpent;
+                                            dispatch({
+                                                type: 'UPDATE_INVESTIGATOR',
+                                                payload: { code: inv.code, updates: { actions: newActions } }
+                                            });
+                                        }}
+                                        className={cn(
+                                            "w-6 h-6 rounded-full border-2 transition-colors cursor-pointer flex items-center justify-center",
+                                            isFilled
+                                                ? "bg-amber-500 border-amber-600 shadow-[0_0_8px_rgba(245,158,11,0.5)]"
+                                                : "bg-zinc-950 border-zinc-700"
+                                        )}
+                                    >
+                                        {isFilled && <div className="w-1.5 h-1.5 bg-amber-100 rounded-full" />}
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
@@ -104,12 +142,12 @@ function InvestigatorRow({ inv }: { inv: Investigator }) {
                                 <div className="flex items-center justify-between bg-zinc-950 rounded p-1">
                                     <Button
                                         variant="ghost" size="sm" className="h-8 w-8 text-zinc-400"
-                                        onClick={() => dispatch({ type: 'UPDATE_INVESTIGATOR', payload: { code: inv.code, updates: { sanityDamage: Math.max(0, inv.sanityDamage - 1) } } })}
+                                        onClick={() => dispatch({ type: 'UPDATE_INVESTIGATOR', payload: { code: inv.code, updates: { sanityDamage: Math.max(0, inv.sanityDamage + 1) } } })}
                                     >-</Button>
                                     <span className="text-blue-500 font-bold">{inv.sanityDamage}</span>
                                     <Button
                                         variant="ghost" size="sm" className="h-8 w-8 text-zinc-400"
-                                        onClick={() => dispatch({ type: 'UPDATE_INVESTIGATOR', payload: { code: inv.code, updates: { sanityDamage: inv.sanityDamage + 1 } } })}
+                                        onClick={() => dispatch({ type: 'UPDATE_INVESTIGATOR', payload: { code: inv.code, updates: { sanityDamage: inv.sanityDamage - 1 } } })}
                                     >+</Button>
                                 </div>
                             </div>
@@ -155,7 +193,7 @@ export function InvestigationPhase() {
                 ))}
             </div>
 
-            <div className="fixed bottom-0 left-0 right-0 p-4 bg-zinc-950/80 backdrop-blur border-t border-zinc-800 flex gap-2">
+            <div className="flex gap-2 mt-4">
                 <Button
                     variant="secondary"
                     className="flex-1 bg-zinc-800"
@@ -164,10 +202,10 @@ export function InvestigationPhase() {
                     <RefreshCcw className="w-4 h-4 mr-2" /> Reset Actions
                 </Button>
                 <Button
-                    className="flex-1 bg-amber-700 hover:bg-amber-600 text-white"
+                    className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
                     onClick={() => dispatch({ type: 'NEXT_PHASE' })}
                 >
-                    End Phase <ArrowRight className="w-4 h-4 ml-2" />
+                    Proceed to Enemy <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
             </div>
         </div>

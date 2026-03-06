@@ -21,13 +21,12 @@ export interface GameState {
     round: number;
     phase: Phase;
     doom: number;
-    agendaDoomThreshold: number;
     investigators: Investigator[];
 }
 
 export type Action =
     | { type: 'SET_GAME_STATE'; payload: GameState }
-    | { type: 'START_GAME'; payload: { investigators: Investigator[]; doomThreshold: number } }
+    | { type: 'START_GAME'; payload: { investigators: Investigator[] } }
     | { type: 'SET_PHASE'; payload: Phase }
     | { type: 'NEXT_PHASE' }
     | { type: 'ADD_DOOM'; payload: number }
@@ -45,6 +44,5 @@ export const INITIAL_STATE: GameState = {
     round: 1,
     phase: 'setup',
     doom: 0,
-    agendaDoomThreshold: 0,
     investigators: [],
 };

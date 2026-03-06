@@ -26,7 +26,6 @@ const gameReducer = (state: GameState, action: Action): GameState => {
                     healthDamage: 0,
                     sanityDamage: 0
                 })),
-                agendaDoomThreshold: action.payload.doomThreshold,
             };
         case 'SET_PHASE':
             return { ...state, phase: action.payload };
@@ -66,13 +65,23 @@ const gameReducer = (state: GameState, action: Action): GameState => {
                 ...state,
                 investigators: state.investigators.map(inv => ({ ...inv, actions: inv.maxActions || 3 }))
             };
-        case 'UPDATE_MAX_ACTIONS':
+        case 'UPDATE_MAX_ACTIONS': {
             return {
                 ...state,
-                investigators: state.investigators.map(inv =>
-                    inv.code === action.payload.code ? { ...inv, maxActions: action.payload.value, actions: Math.min(inv.actions, action.payload.value) } : inv
-                )
+                investigators: state.investigators.map(inv => {
+                    if (inv.code !== action.payload.code) return inv;
+                    const oldMax = inv.maxActions || 3;
+                    const newMax = action.payload.value;
+                    const diff = newMax - oldMax;
+                    // Adding a pip: increase remaining actions so the new pip starts unfilled
+                    // Removing a pip: clamp actions down if needed
+                    const newActions = diff > 0
+                        ? inv.actions + diff
+                        : Math.min(inv.actions, newMax);
+                    return { ...inv, maxActions: newMax, actions: newActions };
+                })
             };
+        }
         case 'TAKE_ACTION':
             return {
                 ...state,

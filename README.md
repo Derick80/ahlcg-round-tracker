@@ -1,36 +1,141 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Arkham Horror LCG Round Tracker
+
+A digital round tracker and game state manager for **Arkham Horror: The Living Card Game**. Built to streamline tabletop play by tracking rounds, phases, investigators, and game state — all from your browser.
+
+## Features
+
+### 🎮 Game Setup
+- **Investigator Search** — Search and select up to 4 investigators from the full ArkhamDB database
+- Displays each investigator's name, faction, health, and sanity
+- One-click removal of selected investigators
+
+### 🔄 Phase Tracking
+- **Phase Tracker Bar** — Sticky top bar showing all four phases (Mythos → Investigation → Enemy → Upkeep) with the active phase highlighted
+- Click any phase to jump directly to it
+- Automatic phase advancement with "Proceed to..." buttons
+
+### 💀 Mythos Phase
+- Checklist for placing doom on the agenda and checking the threshold
+- Per-investigator encounter card draw checkboxes
+
+### 🔍 Investigation Phase
+- **Action Pips** — Visual pip system for each investigator; pips start empty and fill up as actions are spent. Tap to spend, tap again to undo
+- **Health & Sanity Tracking** — Real-time display of remaining health (❤️) and sanity (🧠) with low-value pulse animations
+- **Expandable Cards** — Collapse/expand each investigator to access damage/horror controls and max action adjustments (3–5 pips)
+- **Info Popover** — Per-card info button explaining how pips, health, and sanity work
+- Reset Actions button to restore all investigators' action pips
+
+### ⚔️ Enemy Phase
+- Hunter movement checklist
+- Enemy attack checklist
+- Proceed to Upkeep button
+
+### 🔁 Upkeep Phase
+- Ready all exhausted cards checklist
+- Per-investigator "draws 1 card and gains 1 resource" checkboxes
+- Hand size check reminder
+- End Round button (advances to next round's Mythos Phase)
+
+### 📖 Keyword Glossary
+- Searchable dialog accessible from the bottom bar
+- Covers key Arkham Horror keywords (Alert, Aloof, Massive, Peril, Surge, etc.) with full definitions
+
+### 🧭 Bottom Bar
+- **Round Counter** — Displays current round number during active play
+- **Keyword Search** — Quick access to the keyword glossary
+- **Reset Game** — Confirmation dialog before clearing all progress and returning to setup
+
+### 💾 Persistent State
+- Game state (round, phase, investigators, actions, damage, horror) is saved to local storage
+- Sessions survive page reloads — pick up right where you left off
+
+## Tech Stack
+
+| Technology | Purpose |
+|---|---|
+| **Next.js** | React framework with App Router |
+| **TypeScript** | Type-safe development |
+| **React** | UI components and state management (Context + useReducer) |
+| **Tailwind CSS** | Utility-first styling with dark theme |
+| **Shadcn UI** | Pre-built accessible components (Dialog, Command, AlertDialog, Popover, etc.) |
+| **Radix UI** | Headless UI primitives powering Shadcn |
+| **Lucide React** | Icon library |
+| **ArkhamDB API** | Investigator data source |
+| **NextAuth.js + Prisma** | Authentication infrastructure |
+
+## Architecture
+
+```
+app/
+├── context/
+│   ├── GameContext.tsx     # React context + useReducer for game state
+│   └── keywords.ts        # Arkham keyword definitions
+├── services/
+│   └── arkhamdb.ts        # ArkhamDB API client
+├── types/
+│   └── game.ts            # TypeScript types, actions, & initial state
+├── layout.tsx             # Root layout with GameProvider + BottomBar
+└── page.tsx               # Home page rendering GameLoop
+
+components/game/
+├── GameLoop.tsx            # Phase router (setup vs active game)
+├── GameSetup.tsx           # Investigator selection + start game
+├── PhaseTracker.tsx        # Sticky phase navigation bar
+├── MythosPhase.tsx         # Mythos phase checklist
+├── InvestigationPhase.tsx  # Action pips, health/sanity, damage controls
+├── EnemyPhase.tsx          # Enemy phase checklist
+├── UpkeepPhase.tsx         # Upkeep phase checklist
+├── InvestigatorSearch.tsx  # ArkhamDB investigator search combobox
+├── KeywordSearchDialog.tsx # Searchable keyword glossary dialog
+├── BottomBar.tsx           # Persistent bottom bar (round, keywords, reset)
+└── ProjectCard.tsx         # Project description card
+```
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18+
+- npm or yarn
+
+### Installation
+
+```bash
+git clone https://github.com/Derick80/ahlcg-round-tracker.git
+cd ahlcg-round-tracker
+npm install
+```
+
+### Development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## How It Works
 
-To learn more about Next.js, take a look at the following resources:
+1. **Select investigators** from the ArkhamDB database using the search combobox
+2. **Start the scenario** — the game enters the Mythos phase
+3. **Follow the phase checklists** — each phase guides you through the required steps
+4. **Track actions, damage, and horror** in the Investigation phase with interactive controls
+5. **Advance through phases** using the navigation bar or "Proceed to..." buttons
+6. **Look up keywords** anytime via the bottom bar's glossary
+7. **Reset** when the scenario ends and start fresh
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## License
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+MIT
 
-## Deploy on Vercel
+## Acknowledgments
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [ArkhamDB](https://arkhamdb.com/) for the investigator data API
+- [Fantasy Flight Games](https://www.fantasyflightgames.com/) for Arkham Horror: The Living Card Game
+- Built with [Shadcn UI](https://ui.shadcn.com/) and [Radix UI](https://www.radix-ui.com/)
