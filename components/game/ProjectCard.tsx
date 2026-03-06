@@ -36,7 +36,7 @@ export function ProjectCard() {
             <CardContent className="space-y-4">
                 <p className="text-zinc-400 leading-relaxed text-sm">
                     A digital round tracker and game state manager for Arkham Horror: The Living Card Game.
-                    Track rounds, phases, doom, investigator actions, health, and sanity in real time.
+                    Track rounds, phases,investigator actions, health, and sanity in real time.
                     Features a searchable keyword glossary, per-investigator action pips, and phase-by-phase
                     checklists for Mythos, Investigation, Enemy, and Upkeep. Supports up to 4 investigators
                     with persistent game state saved to local storage.
@@ -68,7 +68,7 @@ export function ProjectCard() {
                         Investigator data is fetched from the ArkhamDB API. Game state is managed via React context
                         with a reducer pattern and persisted to local storage so sessions survive page reloads.
                         The UI is built with Shadcn UI components on top of Radix primitives, styled with Tailwind CSS
-                        for a dark, thematic aesthetic. Authentication is handled by NextAuth.js with Prisma and PostgreSQL.
+                        for a dark, thematic aesthetic.
                     </p>
                 </div>
 
