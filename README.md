@@ -1,6 +1,6 @@
 # Arkham Horror LCG Round Tracker
 
-A digital round tracker and game state manager for **Arkham Horror: The Living Card Game**. Built to streamline tabletop play by tracking rounds, phases, investigators, and game state — all from your browser.
+A digital round tracker and game state manager for **Arkham Horror: The Living Card Game**. Built for solo player this app helps you keep track of your game. You can walk away from your true solo scenario and not worry about forgetting where you were in the game. It feels even better when playing 2 handed (or more) solo.
 
 ## Features
 
@@ -61,7 +61,6 @@ A digital round tracker and game state manager for **Arkham Horror: The Living C
 | **Radix UI** | Headless UI primitives powering Shadcn |
 | **Lucide React** | Icon library |
 | **ArkhamDB API** | Investigator data source |
-| **NextAuth.js + Prisma** | Authentication infrastructure |
 
 ## Architecture
 
