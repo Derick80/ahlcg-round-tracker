@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { inter, cinzel } from "@/app/fonts";
 import "./globals.css";
+import { BottomBar } from "@/components/game/BottomBar";
 
 export const metadata: Metadata = {
   title: "AHLCG Round Tracker",
@@ -15,7 +16,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${cinzel.variable} font-sans antialiased bg-zinc-950 text-zinc-100`}>
-        {children}
+        <div className="pb-16 sm:pb-20">
+          {children}
+        </div>
+        <BottomBar />
       </body>
     </html>
   );
