@@ -17,7 +17,7 @@ const gameReducer = (state: GameState, action: Action): GameState => {
         case 'START_GAME':
             return {
                 ...INITIAL_STATE,
-                phase: 'mythos',
+                phase: 'investigation',
                 investigators: action.payload.investigators.map(inv => ({
                     ...inv,
                     actions: 3,
@@ -37,14 +37,18 @@ const gameReducer = (state: GameState, action: Action): GameState => {
 
             if (state.phase === 'upkeep') {
                 nextRound += 1;
-                // Upkeep reset logic logic should technically happen IN upkeep or trigger a new round mythos start?
-                // Usually Upkeep ends -> Round Ends -> New Round (Mythos)
             }
+
+            // Reset actions when starting a new round (transitioning out of upkeep)
+            const nextInvestigators = state.phase === 'upkeep'
+                ? state.investigators.map(inv => ({ ...inv, actions: inv.maxActions || 3 }))
+                : state.investigators;
 
             return {
                 ...state,
                 phase: nextPhase,
                 round: nextRound,
+                investigators: nextInvestigators,
             };
         }
         case 'ADD_DOOM':
