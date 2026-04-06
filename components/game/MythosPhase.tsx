@@ -8,6 +8,23 @@ import { Skull, ArrowRight } from 'lucide-react';
 export function MythosPhase() {
     const { state, dispatch } = useGame();
 
+    if (state.round === 1) {
+        return (
+            <div className="flex flex-col gap-6 p-4 animate-in fade-in zoom-in-95 duration-300">
+                <div className="text-center space-y-4 my-8">
+                    <h2 className="text-3xl font-serif text-zinc-500 line-through decoration-zinc-700">Mythos Phase</h2>
+                    <p className="text-zinc-500 text-sm italic">The Mythos phase is skipped during the first round of the game.</p>
+                </div>
+                <Button
+                    className="w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 py-6"
+                    onClick={() => dispatch({ type: 'NEXT_PHASE' })}
+                >
+                    Proceed to Investigation <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+            </div>
+        );
+    }
+
     return (
         <div className="flex flex-col gap-6 p-4 animate-in fade-in zoom-in-95 duration-300">
             <div className="text-center space-y-2">
